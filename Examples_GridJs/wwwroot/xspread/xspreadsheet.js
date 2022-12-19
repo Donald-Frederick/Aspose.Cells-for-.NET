@@ -23152,15 +23152,17 @@
             {
               key: "getHighlightCellTxt",
               value: function (t, e) {
-                if (this.showhighlight && !this.highlightall)
-                  for (
-                    var i = this.highlighttxts, n = 0, r = i.length;
-                    n < r;
-                    n++
-                  )
-                    if (i[n].row === t && i[n].col === e)
-                      return (i[n].color = this.highlightstyle.color), i[n];
-                return null;
+                if (this.showhighlight && !this.highlightall){
+                  //return an array of highlights for the cell
+                  return this.highlighttxts.reduce((filtered, highlighttxt) => {
+                    if (highlighttxt.row === t && highlighttxt.col === e) {
+                      highlighttxt.color = this.highlightstyle.color;
+                      filtered.push(highlighttxt);
+                    }
+                    return filtered;
+                  }, []);
+                }
+                return [];
               },
             },
             {
@@ -27760,34 +27762,34 @@
                       r = d + Ae(e);
                     if (null !== o) {
                       if (b <= o.start && o.start < b + t.length) {
-                        w = !0;
+                          w = !0;
                         var h = t.substr(0, o.start - b),
-                          v = Ae(a.measureText(h).width);
-                        (n += v), Ae(e) - v;
-                      }
+                            v = Ae(a.measureText(h).width);
+                          (n += v), Ae(e) - v;
+                        }
                       if (b < o.end && o.end < b + t.length) {
                         var g = t.substr(0, o.end - b),
-                          p = Ae(a.measureText(g).width);
-                        r = d + p;
-                      }
+                            p = Ae(a.measureText(g).width);
+                          r = d + p;
+                        }
                       if ((b > o.end && (w = !1), w)) {
-                        var m = { x: 0, y: 0 };
-                        (m.y =
-                          "bottom" === l
-                            ? c.size + 2
-                            : "top" === l
-                            ? 2
-                            : (c.size + 2) / 2),
-                          "center" === s
-                            ? (m.x = Ae(e / 2))
-                            : "right" === s && (m.x = Ae(e)),
-                          x.push({
-                            x: n - m.x,
-                            y: y - m.y,
-                            w: r - n,
-                            h: c.size + 2,
-                          });
-                      }
+                          var m = { x: 0, y: 0 };
+                          (m.y =
+                            "bottom" === l
+                              ? c.size + 2
+                              : "top" === l
+                              ? 2
+                              : (c.size + 2) / 2),
+                            "center" === s
+                              ? (m.x = Ae(e / 2))
+                              : "right" === s && (m.x = Ae(e)),
+                            x.push({
+                              x: n - m.x,
+                              y: y - m.y,
+                              w: r - n,
+                              h: c.size + 2,
+                            });
+                        }
                     }
                     i.fillText(t, d, y),
                       u && De.call(i, "strike", d, y, s, l, c.size, Ae(e)),
@@ -28629,6 +28631,10 @@
               ((v.height += 3), (p = !0))),
             ni(e, d, c, 0, n, h, f);
           var m = e.getHighlightCellTxt(i, n);
+          if(m.length == 0) m.push(null); 
+          //ensure is called at least once so the cell is rendered
+          //but if there are multiple highlights, add a rect for each
+          m.forEach((highlight)=>{
           t.rect(v, function () {
             var i = "";
             (i =
@@ -28656,14 +28662,14 @@
                       underline: f.underline,
                     },
                     f.textwrap,
-                    m
+                    highlight
                   )
                 : t.richtext(h, d, f.align, f.valign, f.textwrap, m),
               e.validations.getError(c, n) && t.error(d),
               u && t.frozen(d),
               void 0 !== f.pattern &&
                 (d.setPattern(f.pattern), t.strokePattern(d));
-          }),
+          })}),
             void 0 !== f.border &&
               (g && (d.width -= 3),
               p && (d.height -= 3),
@@ -36719,24 +36725,30 @@
             key: "addHighlightText",
             value: function (t, e, i, n) {
               var r = this.sheet.data,
-                o = { row: t, col: e, start: i, end: n },
-                a = r.highlighttxts.find(function (i) {
-                  if (i.row === t && i.col === e) return i;
-                });
-              a ? ((a.start = i), (a.end = n)) : r.highlighttxts.push(o);
+                o = { row: t, col: e, start: i, end: n };
+              r.highlighttxts.push(o);
             },
           },
           {
             key: "removeHighlightText",
-            value: function (t, e) {
+            value: function (t, e, start, end) {
               for (
-                var i = this.sheet.data, n = 0;
-                n < i.highlighttxts.length;
-                n++
-              )
+                var i = this.sheet.data, n = i.highlighttxts.length-1;
+                n >= 0;
+                n--
+              ) {
+                //if start and end are passed, use them,
+                //otherwise match on row and column
+                let startIdx = Number.isInteger(start)
+                    ? start
+                    : i.highlighttxts[n].start,
+                  endIdx = Number.isInteger(end) ? end : i.highlighttxts[n].end;
                 i.highlighttxts[n].row === t &&
                   i.highlighttxts[n].col === e &&
+                  i.highlighttxts[n].start === startIdx &&
+                  i.highlighttxts[n].end === endIdx &&
                   i.highlighttxts.splice(n, 1);
+              }
             },
           },
           {
@@ -39478,8 +39490,9 @@
           },
           {
             key: "removeHighlightText",
-            value: function (t, e) {
-              this.highlight.removeHighlightText(t, e);
+            //support optional start and end character index
+            value: function (t, e, start, end) {
+              this.highlight.removeHighlightText(t, e, start, end);
             },
           },
           {
