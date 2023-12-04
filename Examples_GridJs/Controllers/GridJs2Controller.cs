@@ -182,10 +182,21 @@ namespace Aspose.Cells.GridJsDemo.Controllers
         {
             string uid = HttpContext.Request.Form["uid"];
             string p = HttpContext.Request.Form["p"];
-            IFormFile file = HttpContext.Request.Form.Files[0];
+            string iscontrol= HttpContext.Request.Form["control"];
+           
 
             string ret = null;
             GridJsWorkbook wb = new GridJsWorkbook();
+            if (iscontrol == null)
+            {
+                if (HttpContext.Request.Form.Files.Count == 0)
+                {
+                    //for add shape,need to set p.type as one of AutoShapeType
+                    ret = wb.InsertImage(uid, p, null, null);
+                    return Json(ret);
+                }
+                else {
+                    IFormFile file = HttpContext.Request.Form.Files[0];
             if (file != null)
             {
 
@@ -209,7 +220,28 @@ namespace Aspose.Cells.GridJsDemo.Controllers
             }
             else
             {
-                return Json(wb.ErrorJson("image is null"));
+                        return Json(wb.ErrorJson("no file when add image"));
+                    }
+                }
+               
+            }
+            else
+            {
+                try
+                {
+
+                    ret = wb.InsertImage(uid, p, null, null);
+
+                }
+                catch (Exception e)
+                {
+
+                    return Json(wb.ErrorJson(e.Message));
+                }
+
+
+
+                return Json(ret);
             }
 
 
@@ -348,6 +380,27 @@ namespace Aspose.Cells.GridJsDemo.Controllers
             return new FileStreamResult(GridJsWorkbook.GetImageStream(uid, fileid), "image/png");
         }
 
+        //get ole object /GridJs2/Ole
+        public ActionResult Ole()
+        {
+            int oleid = int.Parse(HttpContext.Request.Query["id"]);
+            string uid = HttpContext.Request.Query["uid"];
+            string sheet = HttpContext.Request.Query["sheet"];
+            GridJsWorkbook gwb = new GridJsWorkbook();
+              string filename;
+            byte[] filebyte = gwb.GetOle(uid, sheet, oleid, out filename);
+            if (filename != null)
+            {
+                FileContentResult ret = new FileContentResult(filebyte, GetMimeType(filename));
+                ret.FileDownloadName = filename;
+                return ret;
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         //if use GridCacheForStream you need to set this api
         // GET: /GridJs2/ImageUrl?uid=&id=
         public JsonResult ImageUrl(string id,string uid)
@@ -392,6 +445,11 @@ namespace Aspose.Cells.GridJsDemo.Controllers
             return File(GridJsWorkbook.CacheImp.LoadStream(fileid), mimeType, name);
         }
         
+
+      
+ 
+
+
 
       /// <summary>
       /// down load file

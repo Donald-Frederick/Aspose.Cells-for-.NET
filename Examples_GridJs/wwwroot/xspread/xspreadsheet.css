@@ -192,12 +192,15 @@ body {
 .x-spreadsheet-dropdown .x-spreadsheet-dropdown-content {
   position: absolute;
   z-index: 200;
-  background: #fff;
+  background: #f6f7f8db;
   box-shadow: 1px 2px 5px 2px rgba(51, 51, 51, 0.15);
+  max-height: 600px;
+  overflow-y: auto;
 }
 .x-spreadsheet-dropdown.bottom-left .x-spreadsheet-dropdown-content {
   top: calc(100% + 5px);
   left: 0;
+  overflow-y: visible;
 }
 .x-spreadsheet-dropdown.bottom-left .x-spreadsheet-menubar-dropdown-content {
   top: -5px;
@@ -431,7 +434,7 @@ body {
 }
 .x-spreadsheet-item:hover,
 .x-spreadsheet-item.active {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(224, 215, 215, 0.9);
 }
 .x-spreadsheet-item.divider {
   height: 0;
@@ -560,7 +563,7 @@ body {
 }
 .x-spreadsheet-menu > li.active {
   background-color: #fff;
-  color: rgba(0, 0, 0, 0.65);
+  color: #3c763d !important;
 }
 .x-spreadsheet-menu > li .x-spreadsheet-icon {
   margin: 0 6px;
@@ -1046,8 +1049,6 @@ form fieldset select {
   }
   .x-spreadsheet-bottombar .x-spreadsheet-menu {
     display: flex;
-    overflow-x: scroll;
-    overflow-y: hidden;
   }
   .x-spreadsheet-form-checkbox {
     margin-left: -25px;
@@ -1066,7 +1067,7 @@ form fieldset select {
   display: inline-block;
 }
 .x-spreadsheet-icon .x-spreadsheet-icon-img {
-  background-image: url(05f087c9088a0b2278c09809fc7b57c7.svg);
+  background-image: url(89e181872624b4accdbbe25ec1eb47dc.svg);
   position: absolute;
   width: 262px;
   height: 444px;
@@ -1323,6 +1324,38 @@ form fieldset select {
 .x-spreadsheet-icon .x-spreadsheet-icon-img.savetocloud {
   left: -144px;
   top: -72px;
+}
+.x-spreadsheet-icon .x-spreadsheet-icon-img.insertTextBox {
+  left: -198px;
+  top: -72px;
+}
+.x-spreadsheet-icon .x-spreadsheet-icon-img.insertSpinButton {
+  left: -162px;
+  top: -72px;
+}
+.x-spreadsheet-icon .x-spreadsheet-icon-img.insertScrollBar {
+  left: -180px;
+  top: -72px;
+}
+.x-spreadsheet-icon .x-spreadsheet-icon-img.insertRadioButton {
+  left: -216px;
+  top: -72px;
+}
+.x-spreadsheet-icon .x-spreadsheet-icon-img.insertComboBox {
+  left: -234px;
+  top: -72px;
+}
+.x-spreadsheet-icon .x-spreadsheet-icon-img.insertLabel {
+  left: 0px;
+  top: -90px;
+}
+.x-spreadsheet-icon .x-spreadsheet-icon-img.insertCheckBox {
+  left: -18px;
+  top: -90px;
+}
+.x-spreadsheet-icon .x-spreadsheet-icon-img.insert-shape {
+  left: -36px;
+  top: -90px;
 }
 .x-spreadsheet-formula-bar {
   height: 25px;

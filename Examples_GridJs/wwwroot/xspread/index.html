@@ -131,6 +131,14 @@
                     alert(jsondata.Error);
           } else {
                     loadWithCustomContextMenu(jsondata);
+                    const customImageItems = [
+                        { 'key': 'RemovePicHighlight', 'text': 'remove select image/shape to highlight  ', 'callback': removehighlightSelectImage },
+                        { 'key': 'PicHighlight', 'text': 'add select image/shape to highlight  ', 'callback': highlightSelectImage },
+                        { 'key': 'divider' },
+                        { 'key': 'Hide', 'text': 'hide select image/shape    ', 'callback': hideSelectImage },
+                                             
+                                             ];
+                    xs.sheet.addImageContextMenuItems(customImageItems);
 			}
         }
     });
@@ -166,7 +174,50 @@
             }
            
         }
+        const hideSelectImage = (sheet,selectedObj) => {
+            
+            selectedObj.setVisible(false);
+        }
+        const highlightSelectImage = (sheet, selectedObj) => {
+            //enable the feature to see the result
+            enableHighlightFeature(sheet, true);
+            sheet.removeHighlightInverseRange();
 
+            //check whether image/shape  is selected
+            
+            if (selectedObj) {
+                //add highlight for image/shape
+                if (selectedObj.type === 'Picture') {
+                    sheet.addHighlightImage(selectedObj.id);
+                } else {
+                    sheet.addHighlightShape(selectedObj.id);
+                    if (selectedObj.type === 'TextBox') {
+                        //for example
+                        selectedObj.addHighlight(0, selectedObj.text.length / 2);
+                    }
+                }
+            } 
+
+        };
+        const removehighlightSelectImage = (sheet, selectedObj) => {
+            //enable the feature to see the result
+           
+            //check whether image/shape  is selected
+            
+            if (selectedObj) {
+                //add highlight for image/shape
+                if (selectedObj.type === 'Picture') {
+                    sheet.removeHighlightImage(selectedObj.id);
+                } else {
+                    sheet.removeHighlightShape(selectedObj.id);
+                    if (selectedObj.type === 'TextBox') {
+                        //for example
+                        selectedObj.removeHighlight(0, selectedObj.text.length / 2);
+                    }
+                }
+            }
+
+        };
         const highlightSelect = (sheet) => {
             //enable the feature to see the result
             enableHighlightFeature(sheet, true);
@@ -260,6 +311,7 @@
                   const e = textselect[0].selectionEnd;
                 //enable the feature to see the result
                 enableHighlightFeature(sheet, true);
+                  console.log("sheet.addHighlightText(" + range.sri + "," + range.sci + "," + s + "," + e+")");
                 sheet.addHighlightText(range.sri, range.sci, s, e);
                
                 me.dialog('close');
@@ -315,7 +367,8 @@
         uniqueid = jsondata.uniqueid;
         sheets = jsondata.data;
         const filename=jsondata.filename;
-        const fileDownloadUrl =  "/GridJs2/Download"
+            const fileDownloadUrl = "/GridJs2/Download";
+            const oleDownloadUrl = "/GridJs2/Ole";
         const imageurl =  "/GridJs2/imageurl";
 		const imageuploadurl1 =  "/GridJs2/AddImage";
 		const imageuploadurl2 =   "/GridJs2/AddImageByURL";
@@ -341,39 +394,37 @@
 		}
 
 		 xs.on('cell-selected', (cell, ri, ci) => {
-          console.log('cell:', cell, ', ri:', ri, ', ci:', ci);
+                console.log('cell selected:', cell, ', ri:', ri, ', ci:', ci);
+                if (ci === -1) {
+                    console.log('ci === -1 means a row selected ',ri);
+                }
+                if (ri === -1) {
+                    console.log('ri === -1 means a column selected',ci);
+                }
+            }).on('cells-selected', (cell, range) => {
+                console.log('range   selected:', cell, ', rang:', range);
+
+            }).on('object-selected', (obj) => {
+                console.log('obj selected id:', obj.id, ', type: ', obj.type);
+            }).on('sheet-selected', (id,name) => {
+                console.log('sheet selected id:', id, ', name: ',name);
+            }).on('sheet-loaded', (id, name) => {
+                console.log('sheet is loaded id:', id, ', name: ', name);
         }).on('cell-edited', (text, ri, ci) => {
           console.log('text:', text, ', ri: ', ri, ', ci:', ci);
         });
 
-        $(".x-spreadsheet-overlayer-content").append('<div id="' + imagediv + '" style="position:relative" /> ');
-		let myimagediv= $("#" + imagediv);
+           
 		   
 		    xs.setUniqueId(uniqueid);
 			xs.setFileName(filename);
-            xs.setImageInfo(myimagediv,imageurl,imageuploadurl1,imageuploadurl2,imagecopyurl,basiczorder);
-            xs.setFileDownloadInfo(fileDownloadUrl)
-        //need to extend swapfunction
-        var oldswapfunc = xs.bottombar.swapFunc;
-        xs.bottombar.swapFunc = function (id) {
-			 
-			//xs.sheet.data.settings.showGrid=sheets[id].showGrid;
-            oldswapfunc(id);
-                if (xs.sheet.data.autoFilter.filters.length > 0) {
-				xs.sheet.data.resetAutoFilter();
-                xs.sheet.data.deleteExceptRowHideForAutoFilter();
-			 }
-                //if have bgcolor ,reverse the select area color
-                if (xs.sheet.data.bgcolor) {
-                    $('.x-spreadsheet-selector-area').css('border-color', ColorReverse(xs.sheet.data.bgcolor));
-                } else {
-                    //the default color
-                    $('.x-spreadsheet-selector-area').css('border-color', '#4b89ff');
-                }
-            console.log(`activating sheet ${id}`);
-            };
-        xs.setActiveSheetByName(jsondata.actname).setActiveCell(jsondata.actrow,jsondata.actcol);
-            //add custom context menu items for image
+            xs.setImageInfo( imageurl, imageuploadurl1, imageuploadurl2, imagecopyurl, basiczorder);
+            xs.setFileDownloadInfo(fileDownloadUrl);
+            xs.setOleDownloadInfo(oleDownloadUrl);
+            xs.setVisibleFilter((sheet, s) => { console.log(" here we try enable visible filter for display textbox only:" + s.id + ",type:" + s.type); return (s.type === 'TextBox' && sheet.data.name === 'Sheet1 (2)') || sheet.data.name !== 'Sheet1 (2)'; });
+            
+            xs.setActiveSheetByName(jsondata.actname).setActiveCell(jsondata.actrow,jsondata.actcol);
+            //add custom context menu items for set highlight image function
             xs.sheet.addCustomContextMenuItems([{ 'key': 'key8', 'text': 'set self defined image highlight function', 'callback': setCustomHighlighImageFunc }, { 'key': 'key9', 'text': 'use default highlight image func ', 'callback': removeCustomHighlighImageFunc }])
  
     }

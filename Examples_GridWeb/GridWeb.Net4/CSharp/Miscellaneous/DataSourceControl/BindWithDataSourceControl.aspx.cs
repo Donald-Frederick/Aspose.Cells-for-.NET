@@ -23,7 +23,7 @@ namespace Aspose.Cells.GridWeb.Examples.CSharp.Miscellaneous.DataSourceControl
             if (!IsPostBack && !GridWeb1.IsPostBack)
             {
                 // Bind web worksheet object
-                GridWeb1.WebWorksheets[0].DataBind();
+                GridWeb1.WorkSheets[0].DataBind();
             }
         }
 
@@ -33,10 +33,10 @@ namespace Aspose.Cells.GridWeb.Examples.CSharp.Miscellaneous.DataSourceControl
             {
                 case "UPDATE":
                     // Only available for local users.
-                    if (Request.UserHostAddress == "127.0.0.1")
+                    if (Request.UserHostAddress == "127.0.0.1"||Request.Url.ToString().Contains("localhost"))
                     {
                         // Update datasource
-                        GridWeb1.WebWorksheets[0].DataSourceControlUpdate(AccessDataSource1);
+                        GridWeb1.WorkSheets[0].DataSourceControlUpdate(AccessDataSource1);
                     }
                     else
                     {
@@ -49,7 +49,7 @@ namespace Aspose.Cells.GridWeb.Examples.CSharp.Miscellaneous.DataSourceControl
                     if (GridWeb1.ActiveSheetIndex == 0)
                     {
                         // Bind to new active row
-                        GridWeb1.WebWorksheets.ActiveSheet.CreateNewBindRow();
+                        GridWeb1.ActiveSheet.CreateNewBindRow();
                         // Scrolls the panel to the bottom.
                         GridWeb1.ViewPanelScrollTop = int.MaxValue.ToString();
                     }
@@ -60,7 +60,7 @@ namespace Aspose.Cells.GridWeb.Examples.CSharp.Miscellaneous.DataSourceControl
                     {
                         if (GridWeb1.ActiveCell != null)
                             // Delete active row
-                            GridWeb1.WebWorksheets.ActiveSheet.DeleteBindRow(GridWeb1.ActiveCell.Row);
+                            GridWeb1.ActiveSheet.DeleteBindRow(GridWeb1.ActiveCell.Row);
                     }
                     break;
             }
