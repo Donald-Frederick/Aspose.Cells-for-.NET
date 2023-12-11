@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace gridjs_demo_.netcore
 {
-    public class Program
+    public partial class Program
     {
         public static void Main(string[] args)
         {

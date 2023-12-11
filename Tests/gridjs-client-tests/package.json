@@ -1,0 +1,54 @@
+{
+  "name": "gridjs-client-tests",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "gridjs-spreadsheet": "^23.11.0",
+    "jquery": "^3.7.1",
+    "jszip": "^3.10.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "test:debug": "start npm run start-server && react-scripts --inspect-brk test --runInBand --no-cache --testURL=https://localhost:5001",
+    "eject": "react-scripts eject",
+    "start-server": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./run_server.ps1"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "jest-transform-css": "^6.0.1",
+    "msw": "^2.0.11",
+    "undici": "^6.0.1",
+    "web-streams-polyfill": "^3.2.1"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(@bundled-es-modules)/).*/", "^.+\\.css$"
+    ]
+  }
+}

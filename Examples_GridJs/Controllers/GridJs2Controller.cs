@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Aspose.Cells.GridJsDemo.Models;
 using Newtonsoft.Json.Linq;
 using System.Text;
+using Microsoft.Extensions.Options;
 
 namespace Aspose.Cells.GridJsDemo.Controllers
 {
@@ -44,7 +45,11 @@ namespace Aspose.Cells.GridJsDemo.Controllers
     [ApiController]
     public class GridJs2Controller : Controller 
     {
- 
+        private readonly TestConfig _testConfig;
+        public GridJs2Controller(IOptions<TestConfig> testConfig)
+        {
+            _testConfig = testConfig.Value;
+        }
     
         public ActionResult List()
         {
@@ -52,7 +57,7 @@ namespace Aspose.Cells.GridJsDemo.Controllers
             ArrayList dirlistsss=new ArrayList ();
             ArrayList filelistsss = new ArrayList();
            
-            DirectoryInfo dir = new DirectoryInfo(TestConfig.ListDir);
+            DirectoryInfo dir = new DirectoryInfo(_testConfig.ListDir);
 
             //find files under the directory
             FileInfo[] fi = dir.GetFiles();
@@ -73,7 +78,7 @@ namespace Aspose.Cells.GridJsDemo.Controllers
         {
 
             
-            String file=Path.Combine(TestConfig.ListDir, filename);
+            String file=Path.Combine(_testConfig.ListDir, filename);
            
             return DetailJson(file);
         }
@@ -82,7 +87,7 @@ namespace Aspose.Cells.GridJsDemo.Controllers
         // GET: /GridJs2/DetailFileJsonWithUid?filename=&uid=
         public ActionResult DetailFileJsonWithUid(string filename,string uid)
         {
-            String file = Path.Combine(TestConfig.ListDir, filename);
+            String file = Path.Combine(_testConfig.ListDir, filename);
             GridJsWorkbook wbj = new GridJsWorkbook();
             //check if already in cache
            StringBuilder sb= wbj.GetJsonByUid(uid, filename);

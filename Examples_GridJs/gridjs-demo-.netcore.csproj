@@ -9,6 +9,16 @@
     <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="TestData\test1.xlsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="TestData\test1.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
   
 
 
@@ -22,7 +32,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.1" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.3" />
   </ItemGroup>
 
 </Project>

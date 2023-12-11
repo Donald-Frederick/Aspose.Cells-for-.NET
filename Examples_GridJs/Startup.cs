@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace gridjs_demo_.netcore
 {
@@ -56,7 +57,7 @@ namespace gridjs_demo_.netcore
                 options.Providers.Add<GzipCompressionProvider>();
                 options.Providers.Add<BrotliCompressionProvider>();
             });
-
+            services.Configure<TestConfig>(Configuration.GetSection(nameof(TestConfig)));
             services.Configure<IISServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
@@ -65,7 +66,7 @@ namespace gridjs_demo_.netcore
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IOptions<TestConfig> testConfig)
         {
             app.UseStaticFiles();
             if (env.IsDevelopment())
@@ -94,7 +95,7 @@ namespace gridjs_demo_.netcore
             //start here，setlicense,use cells.license ,GridJs does not provide single license entry anymore
             Aspose.Cells.License l = new Aspose.Cells.License();
 			//set file cache directory
-            Config.FileCacheDirectory = TestConfig.TempDir;
+            Config.FileCacheDirectory = testConfig.Value.TempDir;
 			//set cache implement
             LocalFileCache mwc = new LocalFileCache();
             //if use LocalFileCache,need to create  streamcache path under Config.FileCacheDirectory
