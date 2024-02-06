@@ -21,6 +21,13 @@ namespace GridWeb.Demo.Controllers
         [HttpPost("acw/{type}/{id}")]
         public IActionResult Operation(string type, string id)
         {
+            /*
+            Aspose.Cells.GridWeb.GridWeb  mw = new Aspose.Cells.GridWeb.GridWeb();
+            //use this method to restore GridWeb instance and do your job for Cells if you wish
+            mw.RestoreBySession(HttpContext.Session);
+            string a1v = mw.ActiveSheet.Cells["A1"].StringValue;
+            */
+            //the default auto predefined post action 
             return Aspose.Cells.GridWeb.AcwController.DoAcwAction(this, type, id);
         }
 
@@ -38,7 +45,8 @@ namespace GridWeb.Demo.Controllers
             mw.PictureCachePath = @"E:\storage\tmp\gridweb\piccache";
             mw.EnableAsync = true;
             //load workbook
-            String file = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\wb\test.xlsx");
+            //String file = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\wb\test.xlsx");
+            String file = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\wb\g74production_worksheet.xlsx");
             mw.ImportExcelFile(file);
             mw.ActiveSheet.Cells["B1"].PutValue("version:");
             mw.ActiveSheet.Cells["C1"].PutValue(Aspose.Cells.GridWeb.GridWeb.GetVersion());
